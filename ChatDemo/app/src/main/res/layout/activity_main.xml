@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.main.MainActivity">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_220sdp"
+        app:cardElevation="@dimen/_4sdp"
+        android:id="@+id/cardCover"
+        app:cardCornerRadius="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/bg_profile" />
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:contentInsetEnd="0dp"
+                app:contentInsetStart="0dp">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="@string/app_name"
+                        android:textColor="@color/dark"
+                        android:textSize="@dimen/_14ssp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imgLogout"
+                        android:layout_width="?attr/actionBarSize"
+                        android:layout_height="?attr/actionBarSize"
+                        android:layout_gravity="end"
+                        android:padding="@dimen/_12sdp"
+                        app:srcCompat="@drawable/ic_logout_white"
+                        app:tint="@color/dark" />
+                </FrameLayout>
+            </androidx.appcompat.widget.Toolbar>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="?attr/actionBarSize"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardProfile"
+                    android:layout_width="@dimen/_100sdp"
+                    android:layout_height="@dimen/_100sdp"
+                    app:cardCornerRadius="@dimen/_124sdp"
+                    app:cardElevation="0dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imgProfile"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:srcCompat="@drawable/ic_user" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvDisplayName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_16sdp"
+                    android:gravity="center"
+                    android:textColor="@color/dark"
+                    android:textSize="@dimen/_14ssp"
+                    android:textStyle="bold"
+                    tools:text="Display Name" />
+            </LinearLayout>
+        </FrameLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardChat"
+        android:layout_width="@dimen/_64sdp"
+        android:layout_height="@dimen/_64sdp"
+        android:layout_margin="@dimen/_16sdp"
+        app:cardCornerRadius="@dimen/_80sdp"
+        app:cardElevation="0dp"
+        app:cardForegroundColor="@color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardCover"
+        app:layout_constraintVertical_bias="0.0"
+        app:strokeColor="@color/dark"
+        app:strokeWidth="@dimen/_1sdp">
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/ic_launcher_foreground"
+            app:tint="@color/dark" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:gravity="center"
+        android:text="@string/chat"
+        android:textColor="@color/dark"
+        android:textSize="@dimen/_12ssp"
+        app:layout_constraintEnd_toEndOf="@+id/cardChat"
+        app:layout_constraintStart_toStartOf="@+id/cardChat"
+        app:layout_constraintTop_toBottomOf="@id/cardChat" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

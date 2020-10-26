@@ -1,0 +1,11 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.arukas.network">
+
+    <application>
+        <service
+            android:name=".service.FireStoreObserverService" />
+
+        <service
+            android:name=".service.FireStoreUpdateService" />
+    </application>
+</manifest>

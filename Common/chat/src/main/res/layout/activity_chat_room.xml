@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/AppTheme.Toolbar"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/ic_back_white"
+        app:title="@string/chat" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcvMessage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:padding="@dimen/_8sdp"
+        app:layout_constraintBottom_toTopOf="@+id/layoutInput"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        tools:itemCount="6"
+        tools:listitem="@layout/item_message_left" />
+
+    <LinearLayout
+        android:id="@+id/layoutInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_chat_bottom_tab"
+        android:orientation="horizontal"
+        android:padding="@dimen/_8sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgCamera"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:padding="@dimen/_8sdp"
+            app:srcCompat="@drawable/ic_camera_white"
+            app:tint="@color/gray" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgPhoto"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:padding="@dimen/_8sdp"
+            app:srcCompat="@drawable/ic_photo_white"
+            app:tint="@color/gray" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgShowOption"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:padding="@dimen/_4sdp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_next_white"
+            app:tint="@color/gray" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:cardCornerRadius="@dimen/_8sdp"
+            app:cardElevation="0dp"
+            app:cardForegroundColor="@color/transparent"
+            app:strokeColor="@color/gray"
+            app:strokeWidth="1dp">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/tbxMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:inputType="textMultiLine"
+                android:maxHeight="@dimen/_80sdp"
+                android:minHeight="@dimen/_36sdp"
+                android:paddingStart="@dimen/_8sdp"
+                android:paddingTop="@dimen/_4sdp"
+                android:paddingEnd="@dimen/_8sdp"
+                android:paddingBottom="@dimen/_4sdp"
+                android:textSize="@dimen/_12ssp" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgSend"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:padding="@dimen/_8sdp"
+            android:rotation="-25"
+            app:srcCompat="@drawable/ic_send_white"
+            app:tint="@color/gray" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

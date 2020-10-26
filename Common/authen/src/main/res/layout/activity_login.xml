@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.login.LoginActivity">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="@dimen/_144sdp"
+        android:layout_height="@dimen/_144sdp"
+        android:src="@drawable/ic_launcher_foreground"
+        app:layout_constraintBottom_toTopOf="@+id/layoutUsername"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layoutUsername"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginEnd="@dimen/_16sdp"
+        app:layout_constraintBottom_toTopOf="@+id/layoutPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgLogo">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tbxUsername"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:hint="Username"
+            android:inputType="textEmailAddress"
+            android:maxLength="150"
+            android:maxLines="1"
+            android:text="user_a@companya.com" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layoutPassword"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_16sdp"
+        app:layout_constraintBottom_toTopOf="@+id/btnLogin"
+        app:layout_constraintEnd_toEndOf="@+id/layoutUsername"
+        app:layout_constraintStart_toStartOf="@+id/layoutUsername"
+        app:layout_constraintTop_toBottomOf="@+id/layoutUsername">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tbxPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:maxLength="16"
+            android:maxLines="1"
+            android:text="123456" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnLogin"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_42sdp"
+        android:text="Sign In"
+        android:layout_marginTop="@dimen/_36sdp"
+        app:layout_constraintBottom_toTopOf="@+id/layoutSignUp"
+        app:layout_constraintEnd_toEndOf="@+id/layoutPassword"
+        app:layout_constraintStart_toStartOf="@+id/layoutPassword"
+        app:layout_constraintTop_toBottomOf="@+id/layoutPassword" />
+
+    <LinearLayout
+        android:id="@+id/layoutSignUp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/_24sdp"
+        android:layout_marginBottom="@dimen/_64sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/btnLogin"
+        app:layout_constraintStart_toStartOf="@+id/btnLogin"
+        app:layout_constraintTop_toBottomOf="@+id/btnLogin">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Don't have an account?"
+            android:textColor="@color/dark"
+            android:textSize="@dimen/large_text_size" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvSignUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_4sdp"
+            android:text="Sign up here"
+            android:textColor="@color/dark"
+            android:textSize="@dimen/large_text_size"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

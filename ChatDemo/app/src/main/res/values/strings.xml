@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Chat Demo</string>
+    <string name="ok">OK</string>
+    <string name="storage_rational">Please all to access external storage for upload images.</string>
+</resources>

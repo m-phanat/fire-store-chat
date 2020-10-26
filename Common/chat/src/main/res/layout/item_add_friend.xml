@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_50sdp"
+    android:padding="@dimen/_8sdp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardProfileImage"
+        android:layout_width="@dimen/_34sdp"
+        android:layout_height="@dimen/_34sdp"
+        app:cardCornerRadius="@dimen/_42sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgProfile"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/ic_user" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvDisplayName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_4sdp"
+        android:layout_marginEnd="@dimen/_4sdp"
+        android:textColor="@color/dark"
+        android:textSize="@dimen/_12ssp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/tbxUsername"
+        app:layout_constraintEnd_toStartOf="@+id/imgAdd"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/cardProfileImage"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="Display Name" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tbxUsername"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/gray"
+        android:textSize="@dimen/_12ssp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/tvDisplayName"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/tvDisplayName"
+        app:layout_constraintTop_toBottomOf="@+id/tvDisplayName"
+        tools:text="user@mail.com" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgAdd"
+        android:layout_width="@dimen/_24sdp"
+        android:layout_height="@dimen/_24sdp"
+        android:padding="@dimen/_4sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_add_friend"
+        app:tint="@color/dark" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

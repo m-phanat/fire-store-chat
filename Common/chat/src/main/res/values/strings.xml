@@ -1,0 +1,12 @@
+<resources>
+    <string name="chat">Chat</string>
+    <string name="people">People</string>
+    <string name="group">Group</string>
+    <string name="setting">Setting</string>
+    <string name="add_friend">Add friend</string>
+    <string name="search">Search</string>
+    <string name="search_friend_hint">Friend\'s username</string>
+    <string name="user_profile">User Profile</string>
+    <string name="call">Call</string>
+    <string name="request_camera_permission">This application need to access camera and external storage for send photo in chat.</string>
+</resources>
