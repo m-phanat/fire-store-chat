@@ -33,13 +33,13 @@ class ChatHistoryFragment :
     }
 
     private fun observeHistoryUpdate() {
-        viewModel.getHistoryUpdate().observe(viewLifecycleOwner, Observer {
+        viewModel.getHistoryUpdate().observe(viewLifecycleOwner, {
             adapter.updateData(it)
         })
     }
 
     private fun observeChatHistory() {
-        viewModel.getChatHistory().observe(viewLifecycleOwner, Observer {
+        viewModel.getChatHistory().observe(viewLifecycleOwner, {
             adapter.setData(it)
         })
     }

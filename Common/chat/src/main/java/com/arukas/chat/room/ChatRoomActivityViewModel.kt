@@ -87,26 +87,28 @@ class ChatRoomActivityViewModel(application: Application) : BaseViewModel(applic
     }
 
     fun sendTextMessage(text: String) {
-        val timestamp = Calendar.getInstance().timeInMillis
-        val messageId = chatDb.collection(NetworkConstants.COLLECTION_MESSAGE).document().id
-        val message = Message(
-            objectId = messageId,
-            chatId = roomDetail?.chatId.orEmpty(),
-            userId = getMyUserId(),
-            type = "text",
-            text = text,
-            isDeleted = false,
-            createdAt = timestamp,
-            updatedAt = timestamp
-        )
+        if (text.isNotBlank()) {
+            val timestamp = Calendar.getInstance().timeInMillis
+            val messageId = chatDb.collection(NetworkConstants.COLLECTION_MESSAGE).document().id
+            val message = Message(
+                objectId = messageId,
+                chatId = roomDetail?.chatId.orEmpty(),
+                userId = getMyUserId(),
+                type = "text",
+                text = text,
+                isDeleted = false,
+                createdAt = timestamp,
+                updatedAt = timestamp
+            )
 
-        chatDb
-            .collection(NetworkConstants.COLLECTION_MESSAGE)
-            .add(message)
-            .addOnSuccessListener {
-                updateChatDetail(timestamp)
-                updateRoom(timestamp)
-            }
+            chatDb
+                .collection(NetworkConstants.COLLECTION_MESSAGE)
+                .add(message)
+                .addOnSuccessListener {
+                    updateChatDetail(timestamp)
+                    updateRoom(timestamp)
+                }
+        }
     }
 
     private fun updateChatDetail(timestamp: Long) {
