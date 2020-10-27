@@ -1,20 +1,18 @@
 package com.arukas.network.model
 
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import com.google.firebase.firestore.Exclude
 import com.google.gson.annotations.SerializedName
-import io.realm.RealmModel
-import io.realm.RealmObject
-import io.realm.annotations.Ignore
-import io.realm.annotations.PrimaryKey
-import io.realm.annotations.RealmClass
 import kotlinx.android.parcel.Parcelize
 
-@RealmClass
+@Entity
 @Parcelize
-open class Person(
+data class Person(
     @PrimaryKey
-    var objectId: String? = "",
+    var objectId: String = "",
     var neverSync: Boolean? = false,
     var requireSync: Boolean? = false,
     var createdAt: Long? = 0L,
@@ -77,4 +75,4 @@ open class Person(
     @Ignore
     @Exclude
     var isAdded: Boolean = false
-) : RealmModel, Parcelable
+) : Parcelable

@@ -1,19 +1,17 @@
 package com.arukas.network.model
 
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import com.google.firebase.firestore.Exclude
-import io.realm.RealmModel
-import io.realm.RealmObject
-import io.realm.annotations.Ignore
-import io.realm.annotations.PrimaryKey
-import io.realm.annotations.RealmClass
 import kotlinx.android.parcel.Parcelize
 
+@Entity
 @Parcelize
-@RealmClass
 open class Single(
     @PrimaryKey
-    var objectId: String? = "",
+    var objectId: String = "",
     var neverSync: Boolean? = false,
     var requireSync: Boolean? = false,
     var createdAt: Long? = 0L,
@@ -33,7 +31,8 @@ open class Single(
     @Ignore
     @Exclude
     var lastMessage: Message? = null,
+
     @Ignore
     @Exclude
     var unreadCount: Int? = 0
-) : RealmModel, Parcelable
+) : Parcelable
