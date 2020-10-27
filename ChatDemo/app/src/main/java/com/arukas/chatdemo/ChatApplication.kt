@@ -3,6 +3,8 @@ package com.arukas.chatdemo
 import android.content.Intent
 import com.arukas.authen.login.LoginActivity
 import com.arukas.base.core.BaseApplication
+import com.arukas.network.notification.Notification
+import com.arukas.network.notification.PushNotification
 import com.arukas.chat.main.MainChatActivity
 import com.arukas.network.cloud.FireStoreManager
 import com.arukas.network.realm.RealmManager
@@ -17,10 +19,14 @@ class ChatApplication : BaseApplication() {
         Paper.init(this)
         Realm.init(this)
         RealmManager.initial(this)
+
+        Notification.initNotificationChannel(applicationContext)
+        PushNotification.innit(this)
     }
 
+
     override fun onLogout() {
-        val serviceIntent=Intent(this,FireStoreObserverService::class.java)
+        val serviceIntent = Intent(this, FireStoreObserverService::class.java)
         stopService(serviceIntent)
 
         val loginIntent = Intent(this, LoginActivity::class.java).apply {
