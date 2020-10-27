@@ -25,10 +25,17 @@ class ChatHistoryFragment :
 
     override fun initView() {
         observeChatHistory()
+        observeHistoryUpdate()
         initRefresh()
         initChatHistoryList()
 
         viewModel.loadChatHistory()
+    }
+
+    private fun observeHistoryUpdate() {
+        viewModel.getHistoryUpdate().observe(viewLifecycleOwner, Observer {
+            adapter.updateData(it)
+        })
     }
 
     private fun observeChatHistory() {

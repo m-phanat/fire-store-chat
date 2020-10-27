@@ -6,14 +6,17 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.arukas.network.model.*
 
-@Database(entities = [Detail::class,Friend::class,Member::class,Message::class,Person::class,Single::class], version = 1)
+@Database(
+    entities = [Detail::class, Friend::class, Member::class, Message::class, Person::class, Single::class],
+    version = 1
+)
 abstract class ChatDatabase : RoomDatabase() {
     abstract fun personDao(): PersonDao
-    abstract fun detailDao():DetailDao
-    abstract fun friendDao():FriendDao
-    abstract fun memberDao():MemberDao
-    abstract fun messageDao():MessageDao
-    abstract fun singleDao():SingleDao
+    abstract fun detailDao(): DetailDao
+    abstract fun friendDao(): FriendDao
+    abstract fun memberDao(): MemberDao
+    abstract fun messageDao(): MessageDao
+    abstract fun singleDao(): SingleDao
 
     companion object {
         private var instance: ChatDatabase? = null
@@ -35,7 +38,7 @@ abstract class ChatDatabase : RoomDatabase() {
                 context.applicationContext,
                 ChatDatabase::class.java,
                 databaseName
-            ).build()
+            ).allowMainThreadQueries().build()
         }
     }
 }

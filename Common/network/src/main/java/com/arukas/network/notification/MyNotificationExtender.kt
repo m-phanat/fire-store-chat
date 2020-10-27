@@ -5,7 +5,7 @@ import androidx.core.app.NotificationCompat
 import com.onesignal.NotificationExtenderService
 import com.onesignal.OSNotificationReceivedResult
 
-class NotificationExtenderExample : NotificationExtenderService() {
+class MyNotificationExtender : NotificationExtenderService() {
     override fun onNotificationProcessing(receivedResult: OSNotificationReceivedResult): Boolean {
         val overrideSettings = OverrideSettings()
         overrideSettings.extender =

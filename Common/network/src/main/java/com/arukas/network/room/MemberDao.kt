@@ -12,6 +12,9 @@ interface MemberDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addMember(member: Member)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun addMembers(members:List<Member>)
+
     @Query("select * from member where member.objectId=:memberId")
     fun getMemberById(memberId: String): Member?
 

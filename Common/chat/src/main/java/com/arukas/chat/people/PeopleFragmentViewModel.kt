@@ -6,9 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import com.arukas.base.BaseViewModel
 import com.arukas.network.model.Friend
 import com.arukas.network.model.Person
-import com.arukas.network.realm.RealmManager
+import com.arukas.network.room.RoomManager
 import com.arukas.network.utils.UserManager
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 
 class PeopleFragmentViewModel(application: Application) : BaseViewModel(application) {
     private val friends = MutableLiveData<List<Person>>()
@@ -20,15 +22,20 @@ class PeopleFragmentViewModel(application: Application) : BaseViewModel(applicat
 
     fun loadFriend() {
         UserManager.getInstance().getUser()?.objectId?.let { myUserId ->
-            friendSubscription = RealmManager.getInstance().getFriends(myUserId)?.subscribe {
-                loadFriendData(it)
-            }
+            friendSubscription = RoomManager
+                .getInstance()
+                .getFriendByUserId(myUserId)
+                ?.subscribeOn(Schedulers.io())
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.subscribe {
+                    loadFriendData(it)
+                }
         }
     }
 
     private fun loadFriendData(friendList: List<Friend>) {
         val friendIds = friendList.map { it.friendId.orEmpty() }
-        val users = RealmManager.getInstance().getFriendsData(friendIds)
+        val users = RoomManager.getInstance().getPersonByIds(friendIds)
         friends.value = users
     }
 

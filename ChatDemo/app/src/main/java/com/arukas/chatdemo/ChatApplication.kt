@@ -3,22 +3,20 @@ package com.arukas.chatdemo
 import android.content.Intent
 import com.arukas.authen.login.LoginActivity
 import com.arukas.base.core.BaseApplication
-import com.arukas.network.notification.Notification
-import com.arukas.network.notification.PushNotification
+import com.arukas.base.notification.Notification
+import com.arukas.base.notification.PushNotification
 import com.arukas.chat.main.MainChatActivity
 import com.arukas.network.cloud.FireStoreManager
-import com.arukas.network.realm.RealmManager
+import com.arukas.network.room.RoomManager
 import com.arukas.network.service.FireStoreObserverService
 import io.paperdb.Paper
-import io.realm.Realm
 
 class ChatApplication : BaseApplication() {
 
     override fun createApp() {
         FireStoreManager.initial()
         Paper.init(this)
-        Realm.init(this)
-        RealmManager.initial(this)
+        RoomManager.initial(this)
 
         Notification.initNotificationChannel(applicationContext)
         PushNotification.innit(this)

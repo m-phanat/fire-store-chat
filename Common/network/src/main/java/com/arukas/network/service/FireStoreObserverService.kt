@@ -7,11 +7,13 @@ import android.os.IBinder
 import com.arukas.network.cloud.FireStoreManager
 import com.arukas.network.constants.NetworkConstants
 import com.arukas.network.model.*
-import com.arukas.network.realm.RealmManager
+import com.arukas.network.room.RoomManager
 import com.arukas.network.utils.UserManager
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.ListenerRegistration
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 
 class FireStoreObserverService : Service() {
     private var personListener: ListenerRegistration? = null
@@ -46,7 +48,7 @@ class FireStoreObserverService : Service() {
                 .collection(it)
                 .document(NetworkConstants.DOCUMENT_CHAT)
 
-            RealmManager.getInstance().setRealmDb(it)
+            RoomManager.getInstance().setDatabase(it)
 
             observePersons()
             observeFriends()
@@ -64,8 +66,12 @@ class FireStoreObserverService : Service() {
 
         val myUserId = UserManager.getInstance().getUser()?.objectId.orEmpty()
         memberDisposable =
-            RealmManager.getInstance().getMembers(myUserId)?.subscribe { memberResult ->
-                if (memberResult.size > 0) {
+            RoomManager
+                .getInstance()
+                .getMemberByUserId(myUserId)
+                ?.subscribeOn(Schedulers.io())
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.subscribe { memberResult ->
                     for (member in memberResult) {
                         if (member.isActive == true) {
                             //add observer
@@ -76,7 +82,6 @@ class FireStoreObserverService : Service() {
                         }
                     }
                 }
-            }
     }
 
     private fun removeMemberDependencies(member: Member) {
@@ -102,14 +107,14 @@ class FireStoreObserverService : Service() {
                     if (error == null) {
                         value?.documentChanges?.forEach {
                             val remoteMessage = it.document.toObject(Message::class.java)
-                            val localeMessage = RealmManager.getInstance()
-                                .getMessage(remoteMessage.objectId.orEmpty())
+                            val localeMessage =
+                                RoomManager.getInstance().getMessageById(remoteMessage.objectId)
 
                             val remoteUpdatedAt = remoteMessage.updatedAt ?: 0L
                             val localeUpdatedAt = localeMessage?.updatedAt ?: 0L
 
                             if (localeMessage == null || remoteUpdatedAt > localeUpdatedAt) {
-                                RealmManager.getInstance().setData(remoteMessage)
+                                RoomManager.getInstance().setMessage(remoteMessage)
                             }
                         }
                     }
@@ -128,14 +133,14 @@ class FireStoreObserverService : Service() {
                     if (error == null) {
                         value?.documentChanges?.forEach {
                             val remoteDetail = it.document.toObject(Detail::class.java)
-                            val localeDetail = RealmManager.getInstance()
-                                .getDetail(remoteDetail.objectId.orEmpty())
+                            val localeDetail =
+                                RoomManager.getInstance().getDetailById(remoteDetail.objectId)
 
                             val remoteUpdatedAt = remoteDetail.updatedAt ?: 0L
                             val localeUpdatedAt = localeDetail?.updatedAt ?: 0L
 
                             if (localeDetail == null || remoteUpdatedAt > localeUpdatedAt) {
-                                RealmManager.getInstance().setData(remoteDetail)
+                                RoomManager.getInstance().setDetail(remoteDetail)
                             }
                         }
                     }
@@ -153,14 +158,14 @@ class FireStoreObserverService : Service() {
                     if (error == null) {
                         value?.documentChanges?.forEach {
                             val remoteMember = it.document.toObject(Member::class.java)
-                            val localeMember = RealmManager.getInstance()
-                                .getMember(remoteMember.objectId.orEmpty())
+                            val localeMember =
+                                RoomManager.getInstance().getMemberById(remoteMember.objectId)
 
                             val remoteUpdatedAt = remoteMember.updatedAt ?: 0L
                             val localeUpdatedAt = localeMember?.updatedAt ?: 0L
 
                             if (localeMember == null || remoteUpdatedAt > localeUpdatedAt) {
-                                RealmManager.getInstance().setData(remoteMember)
+                                RoomManager.getInstance().setMember(remoteMember)
                             }
                         }
                     }
@@ -181,22 +186,17 @@ class FireStoreObserverService : Service() {
                         value?.documentChanges?.forEach {
                             val remoteMember = it.document.toObject(Member::class.java)
                             val localeMember =
-                                RealmManager.getInstance()
-                                    .getMember(remoteMember.objectId.orEmpty())
+                                RoomManager.getInstance().getMemberById(remoteMember.objectId)
 
                             val remoteUpdatedAt = remoteMember.updatedAt ?: 0L
                             val localeUpdatedAt = localeMember?.updatedAt ?: 0L
 
                             if (localeMember == null || remoteUpdatedAt > localeUpdatedAt) {
-                                RealmManager.getInstance().setData(remoteMember)
+                                RoomManager.getInstance().setMember(remoteMember)
                             }
                         }
                     }
                 }
-    }
-
-    override fun onCreate() {
-        super.onCreate()
     }
 
     private fun observeSingle2() {
@@ -208,13 +208,13 @@ class FireStoreObserverService : Service() {
                     value?.documentChanges?.forEach {
                         val remoteSingle = it.document.toObject(Single::class.java)
                         val localeSingle =
-                            RealmManager.getInstance().getSingle(remoteSingle.objectId.orEmpty())
+                            RoomManager.getInstance().getSingleById(remoteSingle.objectId)
 
                         val remoteUpdatedAt = remoteSingle.updatedAt ?: 0L
                         val localeUpdatedAt = localeSingle?.updatedAt ?: 0L
 
                         if (localeSingle == null || remoteUpdatedAt > localeUpdatedAt) {
-                            RealmManager.getInstance().setData(remoteSingle)
+                            RoomManager.getInstance().setSingle(remoteSingle)
                             getMember(remoteSingle.chatId.orEmpty())
                             getDetail(remoteSingle.chatId.orEmpty())
                         }
@@ -232,13 +232,13 @@ class FireStoreObserverService : Service() {
                     value?.documentChanges?.forEach {
                         val remoteSingle = it.document.toObject(Single::class.java)
                         val localeSingle =
-                            RealmManager.getInstance().getSingle(remoteSingle.objectId.orEmpty())
+                            RoomManager.getInstance().getSingleById(remoteSingle.objectId)
 
                         val remoteUpdatedAt = remoteSingle.updatedAt ?: 0L
                         val localeUpdatedAt = localeSingle?.updatedAt ?: 0L
 
                         if (localeSingle == null || remoteUpdatedAt > localeUpdatedAt) {
-                            RealmManager.getInstance().setData(remoteSingle)
+                            RoomManager.getInstance().setSingle(remoteSingle)
                             getMember(remoteSingle.chatId.orEmpty())
                             getDetail(remoteSingle.chatId.orEmpty())
                         }
@@ -252,7 +252,7 @@ class FireStoreObserverService : Service() {
             ?.get()?.addOnSuccessListener {
                 val details = it.toObjects(Detail::class.java)
                 if (details.isNotEmpty()) {
-                    RealmManager.getInstance().setData(details)
+                    RoomManager.getInstance().setDetails(details)
                 }
             }
     }
@@ -262,7 +262,7 @@ class FireStoreObserverService : Service() {
             ?.get()?.addOnSuccessListener {
                 val members = it.toObjects(Member::class.java)
                 if (members.isNotEmpty()) {
-                    RealmManager.getInstance().setData(members)
+                    RoomManager.getInstance().setMembers(members)
                 }
             }
     }
@@ -276,14 +276,13 @@ class FireStoreObserverService : Service() {
                         value?.documentChanges?.forEach {
                             val remoteFriend = it.document.toObject(Friend::class.java)
                             val localeFriend =
-                                RealmManager.getInstance()
-                                    .getFriend(remoteFriend.objectId.orEmpty())
+                                RoomManager.getInstance().getFriendById(remoteFriend.objectId)
 
                             val remoteUpdatedAt = remoteFriend.updatedAt ?: 0L
                             val localeUpdatedAt = localeFriend?.updatedAt ?: 0L
 
                             if (localeFriend == null || remoteUpdatedAt > localeUpdatedAt) {
-                                RealmManager.getInstance().setData(remoteFriend)
+                                RoomManager.getInstance().setFriend(remoteFriend)
                             }
                         }
                     }
@@ -297,13 +296,13 @@ class FireStoreObserverService : Service() {
                     value?.documentChanges?.forEach {
                         val person = it.document.toObject(Person::class.java)
                         val localPerson =
-                            RealmManager.getInstance().getPerson(person.objectId.orEmpty())
+                            RoomManager.getInstance().getPersonById(person.objectId)
 
                         val remoteUpdatedAt = person.updatedAt ?: 0L
                         val localeUpdatedAt = localPerson?.updatedAt ?: 0L
 
                         if (localPerson == null || remoteUpdatedAt > localeUpdatedAt) {
-                            RealmManager.getInstance().setData(person)
+                            RoomManager.getInstance().setPerson(person)
                         }
                     }
                 }

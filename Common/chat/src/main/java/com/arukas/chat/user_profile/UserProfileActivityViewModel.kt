@@ -37,7 +37,7 @@ class UserProfileActivityViewModel(application: Application) : BaseViewModel(app
 
     fun createChatRoom(onRoomCreated: ((room: Single) -> Unit)? = null) {
         UserManager.getInstance().getUser()?.let { myUser ->
-            findRoom(myUser.objectId.orEmpty(), user?.objectId.orEmpty()) { room1 ->
+            findRoom(myUser.objectId, user?.objectId.orEmpty()) { room1 ->
                 if (room1 != null) {
                     onRoomCreated?.invoke(room1)
                 } else {
@@ -71,13 +71,10 @@ class UserProfileActivityViewModel(application: Application) : BaseViewModel(app
             .document(chatId)
             .set(room)
             .addOnSuccessListener {
-
-            }
-            .addOnSuccessListener {
                 val timestamp = Calendar.getInstance().timeInMillis
 
-                joinRoom(chatId, myUser.objectId.orEmpty(), true, timestamp)
-                joinRoom(chatId, user?.objectId.orEmpty(), false, timestamp)
+                joinRoom(chatId, myUser.objectId, true, timestamp)
+                joinRoom(chatId, user?.objectId.orEmpty(), true, timestamp)
 
                 onRoomCreated?.invoke(room)
             }
@@ -113,9 +110,10 @@ class UserProfileActivityViewModel(application: Application) : BaseViewModel(app
             userId = userId
         )
 
-        chatDb.collection(NetworkConstants.COLLECTION_MEMBER).add(roomMember).addOnSuccessListener {
-            createChatDetail(userId, roomId, timestamp)
-        }
+        chatDb.collection(NetworkConstants.COLLECTION_MEMBER).document(memberId).set(roomMember)
+            .addOnSuccessListener {
+                createChatDetail(userId, roomId, timestamp)
+            }
     }
 
     private fun createChatDetail(userId: String, roomId: String, timestamp: Long) {
@@ -129,6 +127,6 @@ class UserProfileActivityViewModel(application: Application) : BaseViewModel(app
             updatedAt = timestamp
         )
 
-        chatDb.collection(NetworkConstants.COLLECTION_DETAIL).add(chatDetail)
+        chatDb.collection(NetworkConstants.COLLECTION_DETAIL).document(detailId).set(chatDetail)
     }
 }

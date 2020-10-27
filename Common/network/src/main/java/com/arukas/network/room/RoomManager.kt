@@ -1,6 +1,7 @@
 package com.arukas.network.room
 
 import android.content.Context
+import com.arukas.network.model.*
 
 class RoomManager(private val context: Context) {
     private var chatDatabase: ChatDatabase? = null
@@ -27,34 +28,67 @@ class RoomManager(private val context: Context) {
         chatDatabase = ChatDatabase.getInstance(context, databaseName)
     }
 
-    fun getPersonById(objectId: String) = chatDatabase?.personDao()?.getPersonById(objectId)
-
-    fun getOtherPersons(personsIds: List<String>) =
-        chatDatabase?.personDao()?.getPersonsByIds(personsIds)
-
     fun getFriendById(objectId: String) = chatDatabase?.friendDao()?.getFriendById(objectId)
 
     fun getSingleById(objectId: String) = chatDatabase?.singleDao()?.getSingleById(objectId)
 
     fun getFriendByUserId(userId: String) = chatDatabase?.friendDao()?.getFriendByUserId(userId)
 
-    fun getPersonByIds(personIds:List<String>)=chatDatabase?.personDao()?.getPersonsByIds(personIds)
+    fun getPersonById(objectId: String) = chatDatabase?.personDao()?.getPersonById(objectId)
 
-    fun getPersonWithoutIds(personIds:List<String>)=chatDatabase?.personDao()?.getPersonWithoutIds(personIds)
+    fun getPersonByIds(personIds: List<String>) =
+        chatDatabase?.personDao()?.getPersonsByIds(personIds)
 
-    fun getMemberById(memberId:String)=chatDatabase?.memberDao()?.getMemberById(memberId)
+    fun getPersonWithoutIds(personIds: List<String>) =
+        chatDatabase?.personDao()?.getPersonWithoutIds(personIds)
 
-    fun getMemberByUserId(userId:String)=chatDatabase?.memberDao()?.getMemberByUserId(userId)
+    fun getMemberById(memberId: String) = chatDatabase?.memberDao()?.getMemberById(memberId)
 
-    fun getSingleByIds(singleIds:List<String>)=chatDatabase?.singleDao()?.getSingleListByIds(singleIds)
+    fun getMemberByUserId(userId: String) = chatDatabase?.memberDao()?.getMemberByUserId(userId)
 
-    fun getDetailById(detailId:String)=chatDatabase?.detailDao()?.getDetailById(detailId)
+    fun getSingleByIds(singleIds: List<String>) =
+        chatDatabase?.singleDao()?.getSingleListByIds(singleIds)
 
-    fun getMessageById(messageId:String)=chatDatabase?.messageDao()?.getMessageById(messageId)
+    fun getDetailById(detailId: String) = chatDatabase?.detailDao()?.getDetailById(detailId)
 
-    fun getLastMessage(roomId:String)=chatDatabase?.messageDao()?.getLastMessage(roomId)
+    fun getMessageById(messageId: String) = chatDatabase?.messageDao()?.getMessageById(messageId)
 
-    fun getMyDetail(userId:String,chatId:String)=chatDatabase?.detailDao()?.getMyDetail(userId,chatId)
+    fun getLastMessage(roomId: String) = chatDatabase?.messageDao()?.getLastMessage(roomId)
 
-    fun getAllMessage(roomId:String)=chatDatabase?.messageDao()?.getAllMessage(roomId)
+    fun getMyDetail(userId: String, chatId: String) =
+        chatDatabase?.detailDao()?.getMyDetail(userId, chatId)
+
+    fun getAllMessage(roomId: String) = chatDatabase?.messageDao()?.getAllMessage(roomId)
+
+    fun setMessage(message: Message) {
+        chatDatabase?.messageDao()?.addMessage(message)
+    }
+
+    fun setDetail(detail: Detail) {
+        chatDatabase?.detailDao()?.addDetail(detail)
+    }
+
+    fun setMember(member: Member) {
+        chatDatabase?.memberDao()?.addMember(member)
+    }
+
+    fun setFriend(friend: Friend) {
+        chatDatabase?.friendDao()?.addFriend(friend)
+    }
+
+    fun setPerson(person: Person) {
+        chatDatabase?.personDao()?.addPerson(person)
+    }
+
+    fun setSingle(single: Single) {
+        chatDatabase?.singleDao()?.addSingle(single)
+    }
+
+    fun setDetails(details: List<Detail>) {
+        chatDatabase?.detailDao()?.addDetails(details)
+    }
+
+    fun setMembers(members: List<Member>) {
+        chatDatabase?.memberDao()?.addMembers(members)
+    }
 }

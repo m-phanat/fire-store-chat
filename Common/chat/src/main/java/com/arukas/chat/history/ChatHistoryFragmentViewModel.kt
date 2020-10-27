@@ -5,19 +5,26 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.arukas.base.BaseViewModel
 import com.arukas.network.model.Single
-import com.arukas.network.realm.RealmManager
+import com.arukas.network.room.RoomManager
 import com.arukas.network.service.InAppObservable
 import com.arukas.network.utils.UserManager
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 
 class ChatHistoryFragmentViewModel(application: Application) : BaseViewModel(application) {
     private val chatHistory = MutableLiveData<List<Single>>()
+    private val historyUpdate=MutableLiveData<Single>()
     private var memberDisposable: Disposable? = null
     private var singleDisposable: Disposable? = null
     private var lastMessageObservers = mutableListOf<InAppObservable>()
 
     fun getChatHistory(): LiveData<List<Single>> {
         return chatHistory
+    }
+
+    fun getHistoryUpdate():LiveData<Single>{
+        return historyUpdate
     }
 
     fun getMyUserId() = UserManager.getInstance().getUser()?.objectId.orEmpty()
@@ -30,9 +37,13 @@ class ChatHistoryFragmentViewModel(application: Application) : BaseViewModel(app
 
         val myUser = UserManager.getInstance().getUser()
 
-        memberDisposable = RealmManager.getInstance().getMembers(myUser?.objectId.orEmpty())
+        memberDisposable = RoomManager
+            .getInstance()
+            .getMemberByUserId(myUser?.objectId.orEmpty())
+            ?.subscribeOn(Schedulers.io())
+            ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe { memberResult ->
-                if (memberResult.size > 0) {
+                if (memberResult.isNotEmpty()) {
                     val roomIds = memberResult.orEmpty().map { it.chatId.orEmpty() }
 
                     if (roomIds.isNotEmpty()) {
@@ -52,51 +63,37 @@ class ChatHistoryFragmentViewModel(application: Application) : BaseViewModel(app
             singleDisposable = null
         }
 
-        singleDisposable = RealmManager.getInstance().getSingleDetails(roomIds)?.subscribe {
-            if (it.size > 0) {
-                findLastMessage(it.toList())
-            } else {
-                chatHistory.value = listOf()
+        singleDisposable = RoomManager
+            .getInstance()
+            .getSingleByIds(roomIds)
+            ?.subscribeOn(Schedulers.io())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe {
+                if (it.isNotEmpty()) {
+                    chatHistory.value = it
+                    findLastMessage(it)
+                } else {
+                    chatHistory.value = listOf()
+                }
             }
-        }
     }
 
     private fun findLastMessage(rooms: List<Single>) {
-        /*if (rooms.isNotEmpty()) {
-            *//*val updateTimes = rooms.map { it.updatedAt ?: 0L }
-            chatDb.collection(NetworkConstants.COLLECTION_MESSAGE)
-                .whereIn("updatedAt", updateTimes)
-                .get()
-                .addOnSuccessListener { result ->
-                    val messages = result.toObjects(Message::class.java).orEmpty()
-
-                    messages.forEach { message ->
-                        val room = rooms.find { it.chatId == message.chatId }
-
-                        if (room != null)
-                            room.lastMessage = message
-                    }
-
-                    chatHistory.value = rooms
-                }*//*
-        }*/
-
         rooms.forEach { single ->
-            val observer =
-                RealmManager.getInstance().getLastMessages(single.chatId.orEmpty())?.subscribe {
-                    val messages = it.toList()
-                    if (messages.isNotEmpty()) {
-                        single.lastMessage = messages[0]
-                        chatHistory.value = rooms
-                    }
+            val observer = RoomManager
+                .getInstance()
+                .getLastMessage(single.objectId)
+                ?.subscribeOn(Schedulers.io())
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.subscribe {
+                    single.lastMessage = it
+                    historyUpdate.value = single
                 }
 
             observer?.let {
                 lastMessageObservers.add(InAppObservable(single.chatId.orEmpty(), it))
             }
         }
-
-        chatHistory.value = rooms
     }
 
     override fun onCleared() {

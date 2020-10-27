@@ -64,6 +64,7 @@ class ChatRoomActivity : BaseActivity<ActivityChatRoomBinding, ChatRoomActivityV
         initMessages()
 
         viewModel.loadRoomDetail()
+        viewModel.loadMessages()
     }
 
     private fun initOptions() {

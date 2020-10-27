@@ -9,9 +9,11 @@ import com.arukas.network.constants.NetworkConstants
 import com.arukas.network.model.Detail
 import com.arukas.network.model.Message
 import com.arukas.network.model.Single
-import com.arukas.network.realm.RealmManager
+import com.arukas.network.room.RoomManager
 import com.arukas.network.utils.UserManager
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import java.util.*
 
 class ChatRoomActivityViewModel(application: Application) : BaseViewModel(application) {
@@ -35,26 +37,9 @@ class ChatRoomActivityViewModel(application: Application) : BaseViewModel(applic
 
     fun loadRoomDetail() {
         detailDisposable =
-            RealmManager.getInstance().getMyDetail(getMyUserId(), room?.chatId.orEmpty())
+            RoomManager.getInstance().getMyDetail(getMyUserId(), room?.objectId.orEmpty())
                 ?.subscribe {
-                    val details = it.toList()
-                    if (details.isNotEmpty()) {
-                        roomDetail = Detail(
-                            details[0].objectId,
-                            details[0].neverSync,
-                            details[0].requireSync,
-                            details[0].createdAt,
-                            details[0].updatedAt,
-                            details[0].chatId,
-                            details[0].isArchived,
-                            details[0].isDeleted,
-                            details[0].lastRead,
-                            details[0].mutedUntil,
-                            details[0].typing,
-                            details[0].userId
-                        )
-                        loadMessages()
-                    }
+                    roomDetail = it
                 }
     }
 
@@ -76,44 +61,29 @@ class ChatRoomActivityViewModel(application: Application) : BaseViewModel(applic
         return if (myUserId == room?.userId1.orEmpty()) room?.fullName2.orEmpty() else room?.fullName1.orEmpty()
     }
 
-    private fun loadMessages() {
+    fun loadMessages() {
         messageDisposable =
-            RealmManager.getInstance().getAllMessage(room?.chatId.orEmpty())?.subscribe {
-                val messages = it.toList()
-                this.messages.value = messages
+            RoomManager
+                .getInstance()
+                .getAllMessage(room?.objectId.orEmpty())
+                ?.subscribeOn(Schedulers.io())
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.subscribe {
+                    this.messages.value = it
 
-                if (messages.isNotEmpty()) {
-                    val lastMessage = messages[0]
-                    val timestamp = Calendar.getInstance().timeInMillis
-
-                    roomDetail?.run {
-                        updatedAt = timestamp
-                        lastRead = lastMessage.updatedAt
-
-                        chatDb.collection("details").document(roomDetail?.objectId.orEmpty())
-                            .set(this)
-                    }
-                }
-            }
-        /*chatDb.collection(NetworkConstants.COLLECTION_MESSAGE)
-            .whereEqualTo("chatId", room?.chatId)
-            .orderBy("updatedAt", Query.Direction.ASCENDING)
-            .addSnapshotListener { value, error ->
-                if (error == null) {
-                    val messages = value?.toObjects(Message::class.java).orEmpty()
-                    this.messages.value = messages
-
-                    if (messages.isNotEmpty()) {
-                        val lastMessage = messages[0]
+                    if (it.isNotEmpty()) {
+                        val lastMessage = it[0]
                         val timestamp = Calendar.getInstance().timeInMillis
+
                         roomDetail?.run {
                             updatedAt = timestamp
                             lastRead = lastMessage.updatedAt
-                            chatDb.collection("details").document(roomDetailId).set(this)
+
+                            chatDb.collection("details").document(roomDetail?.objectId.orEmpty())
+                                .set(this)
                         }
                     }
                 }
-            }*/
     }
 
     fun sendTextMessage(text: String) {

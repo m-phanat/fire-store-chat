@@ -9,7 +9,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Entity
 @Parcelize
-open class Single(
+data class Single(
     @PrimaryKey
     var objectId: String = "",
     var neverSync: Boolean? = false,

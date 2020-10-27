@@ -8,14 +8,16 @@ import com.arukas.network.cloud.FireStoreManager
 import com.arukas.network.constants.NetworkConstants
 import com.arukas.network.model.Friend
 import com.arukas.network.model.Person
-import com.arukas.network.realm.RealmManager
+import com.arukas.network.room.RoomManager
 import com.arukas.network.utils.UserManager
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import java.util.*
 
 class AddFriendActivityViewModel(application: Application) : BaseViewModel(application) {
     private val users = MutableLiveData<List<Person>>()
-    private var friendSubscription:Disposable?=null
+    private var friendSubscription: Disposable? = null
     private var keyword = ""
 
     fun setKeyword(keyword: String) {
@@ -36,31 +38,21 @@ class AddFriendActivityViewModel(application: Application) : BaseViewModel(appli
     fun loadUser() {
         val myUser = UserManager.getInstance().getUser()
         val userIds = mutableListOf(myUser?.objectId.orEmpty())
-        friendSubscription=RealmManager.getInstance().getFriends(myUser?.objectId.orEmpty())?.subscribe { friendList ->
-            val friendIds = friendList.map { it.friendId.orEmpty() }
-            userIds.addAll(friendIds)
+        friendSubscription = RoomManager
+            .getInstance()
+            .getFriendByUserId(myUser?.objectId.orEmpty())
+            ?.subscribeOn(Schedulers.io())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe { friendList ->
+                val friendIds = friendList.map { it.friendId.orEmpty() }
+                userIds.addAll(friendIds)
 
-            loadOtherUsers(userIds)
-        }
-
-        /*chatDb.collection("friends")
-            .whereEqualTo("userId", myUser?.objectId.orEmpty())
-            .get()
-            .addOnCompleteListener { friendResult ->
-                if (friendResult.isSuccessful) {
-                    val friendList = friendResult.result?.toObjects(Friend::class.java).orEmpty()
-                    val friendIds = friendList.map { it.friendId.orEmpty() }
-                    userIds.addAll(friendIds)
-
-                    loadOtherUsers(userIds)
-                } else {
-                    users.value = listOf()
-                }
-            }*/
+                loadOtherUsers(userIds)
+            }
     }
 
     private fun loadOtherUsers(friendIds: List<String>) {
-        val allUser = RealmManager.getInstance().getOtherPersons(friendIds)
+        val allUser = RoomManager.getInstance().getPersonWithoutIds(friendIds).orEmpty()
         if (keyword.isNotBlank()) {
             val resultUser =
                 allUser.filter { it.email != null && it.email!!.contains(keyword) }
@@ -82,16 +74,18 @@ class AddFriendActivityViewModel(application: Application) : BaseViewModel(appli
                     if (result.isNullOrEmpty()) {
                         val currentTime = Calendar.getInstance().timeInMillis
                         UserManager.getInstance().getUser()?.let { myUser ->
-                            val objectId = chatDb.collection(NetworkConstants.COLLECTION_FRIEND).document().id
+                            val objectId =
+                                chatDb.collection(NetworkConstants.COLLECTION_FRIEND).document().id
                             val friend = Friend(
                                 objectId = objectId,
-                                userId = myUser.objectId.orEmpty(),
-                                friendId = user.objectId.orEmpty(),
+                                userId = myUser.objectId,
+                                friendId = user.objectId,
                                 createdAt = currentTime,
                                 updatedAt = currentTime
                             )
 
-                            chatDb.collection(NetworkConstants.COLLECTION_FRIEND).document(objectId).set(friend)
+                            chatDb.collection(NetworkConstants.COLLECTION_FRIEND).document(objectId)
+                                .set(friend)
                                 .addOnCompleteListener {
                                     if (it.isSuccessful) {
                                         onSuccessListener?.invoke(user)
