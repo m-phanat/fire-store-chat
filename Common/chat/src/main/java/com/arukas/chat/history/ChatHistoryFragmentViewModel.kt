@@ -4,8 +4,6 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.arukas.base.BaseViewModel
-import com.arukas.network.cloud.FireStoreManager
-import com.arukas.network.constants.NetworkConstants
 import com.arukas.network.model.Single
 import com.arukas.network.realm.RealmManager
 import com.arukas.network.service.InAppObservable
@@ -20,13 +18,6 @@ class ChatHistoryFragmentViewModel(application: Application) : BaseViewModel(app
 
     fun getChatHistory(): LiveData<List<Single>> {
         return chatHistory
-    }
-
-    private val chatDb by lazy {
-        FireStoreManager.getInstance()
-            .getDatabase()
-            .collection(NetworkConstants.COLLECTION_COMPANY)
-            .document(NetworkConstants.DOCUMENT_CHAT)
     }
 
     fun getMyUserId() = UserManager.getInstance().getUser()?.objectId.orEmpty()

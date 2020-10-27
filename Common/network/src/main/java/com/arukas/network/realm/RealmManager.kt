@@ -106,11 +106,12 @@ class RealmManager(private val context: Context) {
             ?.equalTo("chatId", chatId)?.findAll()?.asFlowable()
     }
 
-    fun getAllMessage(chatId: String):Flowable<RealmResults<Message>>? {
-        return realm?.where(Message::class.java)?.equalTo("chatId",chatId)?.findAll()?.asFlowable()
+    fun getAllMessage(chatId: String): Flowable<RealmResults<Message>>? {
+        return realm?.where(Message::class.java)?.equalTo("chatId", chatId)?.findAll()?.asFlowable()
     }
 
-    fun getMemberInRoom(chatId:String,myUserId:String):Flowable<RealmResults<Member>>?{
-        return realm?.where(Member::class.java)?.equalTo("chatId",chatId)?.notEqualTo("userId",myUserId)?.findAll()?.asFlowable()
+    fun getMemberInRoom(chatId: String, myUserId: String): Flowable<RealmResults<Member>>? {
+        return realm?.where(Member::class.java)?.equalTo("chatId", chatId)
+            ?.notEqualTo("userId", myUserId)?.findAll()?.asFlowable()
     }
 }
