@@ -1,14 +1,10 @@
 package com.arukas.network.room.model
 
 import android.os.Parcelable
-import io.realm.RealmModel
-import io.realm.RealmObject
-import io.realm.annotations.PrimaryKey
-import io.realm.annotations.RealmClass
+import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-@RealmClass
 open class Detail(
     @PrimaryKey
     var objectId: String? = "",
@@ -24,4 +20,4 @@ open class Detail(
     var mutedUntil: Int? = 0,
     var typing: Boolean? = false,
     var userId: String? = ""
-) : RealmModel, Parcelable
+) : Parcelable
