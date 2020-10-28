@@ -28,10 +28,10 @@ class ChatRoomActivityViewModel(application: Application) : BaseViewModel(applic
     private var roomDetail: Detail? = null
     private val chatDb by lazy {
         FireStoreManager
-                .getInstance()
-                .getDatabase()
-                .collection(NetworkConstants.COLLECTION_COMPANY)
-                .document(NetworkConstants.DOCUMENT_CHAT)
+            .getInstance()
+            .getDatabase()
+            .collection(NetworkConstants.COLLECTION_COMPANY)
+            .document(NetworkConstants.DOCUMENT_CHAT)
     }
 
     fun getMessages(): LiveData<List<Message>> {
@@ -40,10 +40,10 @@ class ChatRoomActivityViewModel(application: Application) : BaseViewModel(applic
 
     fun loadRoomDetail() {
         detailDisposable =
-                RoomManager.getInstance().getMyDetail(getMyUserId(), room?.objectId.orEmpty())
-                        ?.subscribe {
-                            roomDetail = it
-                        }
+            RoomManager.getInstance().getMyDetail(getMyUserId(), room?.objectId.orEmpty())
+                ?.subscribe {
+                    roomDetail = it
+                }
     }
 
     fun setRoom(room: Single) {
@@ -66,33 +66,34 @@ class ChatRoomActivityViewModel(application: Application) : BaseViewModel(applic
 
     fun loadMessages() {
         messageDisposable =
-                RoomManager
-                        .getInstance()
-                        .getAllMessage(room?.objectId.orEmpty())
-                        ?.subscribeOn(Schedulers.io())
-                        ?.observeOn(AndroidSchedulers.mainThread())
-                        ?.subscribe {
-                            this.messages.value = it
+            RoomManager
+                .getInstance()
+                .getAllMessage(room?.objectId.orEmpty())
+                ?.subscribeOn(Schedulers.io())
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.subscribe {
+                    this.messages.value = it
 
-                            if (it.isNotEmpty()) {
-                                val lastMessage = it[0]
-                                val timestamp = Calendar.getInstance().timeInMillis
+                    if (it.isNotEmpty()) {
+                        val lastMessage = it[0]
+                        val timestamp = Calendar.getInstance().timeInMillis
 
-                                roomDetail?.run {
-                                    updatedAt = timestamp
-                                    lastRead = lastMessage.updatedAt
+                        roomDetail?.run {
+                            updatedAt = timestamp
+                            lastRead = lastMessage.updatedAt
 
-                                    chatDb.collection("details").document(roomDetail?.objectId.orEmpty())
-                                            .set(this)
-                                }
-                            }
+                            chatDb.collection("details").document(roomDetail?.objectId.orEmpty())
+                                .set(this)
                         }
+                    }
+                }
     }
 
     fun sendTextMessage(text: String) {
-        val timestamp = Calendar.getInstance().timeInMillis
-        val messageId = chatDb.collection(NetworkConstants.COLLECTION_MESSAGE).document().id
-        val message = Message(
+        if (text.isNotBlank()) {
+            val timestamp = Calendar.getInstance().timeInMillis
+            val messageId = chatDb.collection(NetworkConstants.COLLECTION_MESSAGE).document().id
+            val message = Message(
                 objectId = messageId,
                 chatId = roomDetail?.chatId.orEmpty(),
                 userId = getMyUserId(),
@@ -101,34 +102,37 @@ class ChatRoomActivityViewModel(application: Application) : BaseViewModel(applic
                 isDeleted = false,
                 createdAt = timestamp,
                 updatedAt = timestamp
-        )
+            )
 
-        chatDb.collection(NetworkConstants.COLLECTION_MESSAGE)
+            chatDb
+                .collection(NetworkConstants.COLLECTION_MESSAGE)
                 .add(message)
                 .addOnSuccessListener {
                     updateChatDetail(timestamp)
                     updateRoom(timestamp)
                 }
 
-        val roomdb = RoomManager.getInstance()
-        val userId = mutableListOf<String>()
+            val roomdb = RoomManager.getInstance()
+            val userId = mutableListOf<String>()
 
-        memberDisposable = roomdb.getMemberInRoom(roomDetail?.chatId.toString(), roomDetail?.userId.toString())?.subscribe {
-            it.forEach { r ->
-                chatDb.collection(NetworkConstants.COLLECTION_PERSON).whereEqualTo("objectId", r.userId)
-                        .get()
-                        .addOnSuccessListener { q ->
-                            q.toObjects(Person::class.java).let { p ->
-                                p[0].oneSignalId?.let { id ->
-                                    userId.add(id)
-                                    PushNotification.send(id, text)
+            memberDisposable =
+                roomdb.getMemberInRoom(roomDetail?.chatId.toString(), roomDetail?.userId.toString())
+                    ?.subscribe {
+                        it.forEach { r ->
+                            chatDb.collection(NetworkConstants.COLLECTION_PERSON)
+                                .whereEqualTo("objectId", r.userId)
+                                .get()
+                                .addOnSuccessListener { q ->
+                                    q.toObjects(Person::class.java).let { p ->
+                                        p[0].oneSignalId?.let { id ->
+                                            userId.add(id)
+                                            PushNotification.send(id, text)
+                                        }
+                                    }
                                 }
-                            }
                         }
-            }
+                    }
         }
-
-
     }
 
     private fun updateChatDetail(timestamp: Long) {
@@ -136,7 +140,7 @@ class ChatRoomActivityViewModel(application: Application) : BaseViewModel(applic
             lastRead = timestamp
             updatedAt = timestamp
             chatDb.collection(NetworkConstants.COLLECTION_DETAIL)
-                    .document(roomDetail?.objectId.orEmpty()).set(this)
+                .document(roomDetail?.objectId.orEmpty()).set(this)
         }
     }
 
@@ -144,7 +148,7 @@ class ChatRoomActivityViewModel(application: Application) : BaseViewModel(applic
         room?.run {
             updatedAt = timestamp
             chatDb.collection(NetworkConstants.COLLECTION_SINGLE).document(chatId.orEmpty())
-                    .set(this)
+                .set(this)
         }
     }
 
