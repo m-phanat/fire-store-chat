@@ -2,6 +2,7 @@ package com.arukas.authen.login
 
 import android.app.Application
 import com.arukas.base.BaseViewModel
+import com.arukas.network.notification.PushNotification
 import com.arukas.network.cloud.FireStoreManager
 import com.arukas.network.model.Person
 import com.arukas.network.utils.UserManager
@@ -56,6 +57,8 @@ class LoginActivityViewModel(application: Application) : BaseViewModel(applicati
                         if(it.size>0){
                             UserManager.getInstance().setUser(it[0])
                             onLoginSuccess?.invoke()
+                            chatDb.document(value.documents[0].id).update("oneSignalId",
+                                PushNotification.oneSignalId())
                         } else {
                             postError("Login failed. Try again later.")
                         }

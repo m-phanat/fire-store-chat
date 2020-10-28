@@ -33,7 +33,7 @@
 
 
         <service
-            android:name="com.arukas.network.notification.NotificationExtenderExample"
+            android:name="com.arukas.network.notification.MyNotificationExtender"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE">
             <intent-filter>

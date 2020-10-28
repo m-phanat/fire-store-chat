@@ -3,8 +3,8 @@ package com.arukas.chatdemo
 import android.content.Intent
 import com.arukas.authen.login.LoginActivity
 import com.arukas.base.core.BaseApplication
-import com.arukas.base.notification.Notification
-import com.arukas.base.notification.PushNotification
+import com.arukas.network.notification.Notification
+import com.arukas.network.notification.PushNotification
 import com.arukas.chat.main.MainChatActivity
 import com.arukas.network.cloud.FireStoreManager
 import com.arukas.network.room.RoomManager

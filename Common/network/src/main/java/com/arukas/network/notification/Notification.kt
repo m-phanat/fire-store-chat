@@ -1,4 +1,4 @@
-package com.arukas.base.notification
+package com.arukas.network.notification
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

@@ -1,4 +1,4 @@
-package com.arukas.base.notification
+package com.arukas.network.notification
 
 import android.content.Context
 import com.google.gson.Gson
@@ -11,8 +11,7 @@ object PushNotification {
         OneSignal.setLogLevel(OneSignal.LOG_LEVEL.VERBOSE, OneSignal.LOG_LEVEL.NONE);
         // OneSignal Initialization
         OneSignal.startInit(context)
-            .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
-            .unsubscribeWhenNotificationsAreDisabled(true)
+            .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.None)
             .init()
 
     }
@@ -23,8 +22,26 @@ object PushNotification {
 
     fun send(oneSignalIds: List<String>, text: String) {
         val json = NotificationContent()
-        json.content.en = text
+        json.contents.en = text
         json.include_player_ids = oneSignalIds
+        OneSignal.postNotification(
+            Gson().toJson(json),
+            object : OneSignal.PostNotificationResponseHandler {
+                override fun onSuccess(response: JSONObject?) {
+                    println("onesignal response $response")
+                }
+
+                override fun onFailure(response: JSONObject?) {
+                    println("onesignal response $response")
+                }
+
+            })
+    }
+
+    fun send(oneSignalIds: String, text: String) {
+        val json = NotificationContent()
+        json.contents.en = text
+        json.include_player_ids = listOf(oneSignalIds)
         OneSignal.postNotification(
             Gson().toJson(json),
             object : OneSignal.PostNotificationResponseHandler {

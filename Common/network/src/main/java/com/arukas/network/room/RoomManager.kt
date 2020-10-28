@@ -46,6 +46,8 @@ class RoomManager(private val context: Context) {
 
     fun getMemberByUserId(userId: String) = chatDatabase?.memberDao()?.getMemberByUserId(userId)
 
+    fun getMemberInRoom(chatId: String,userId: String) = chatDatabase?.memberDao()?.getMemberInRoom(chatId,userId)
+
     fun getSingleByIds(singleIds: List<String>) =
         chatDatabase?.singleDao()?.getSingleListByIds(singleIds)
 
